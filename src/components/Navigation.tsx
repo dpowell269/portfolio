@@ -29,6 +29,11 @@ export default function Navigation() {
               Product
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/data" className={linkClasses}>
+              Fetch
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

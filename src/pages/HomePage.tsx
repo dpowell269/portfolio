@@ -1,7 +1,9 @@
+import main from "../assets/main.jpg";
+import Image from "../components/Image";
 export default function HomePage() {
   return (
     <div>
-      <h1>Home page</h1>
+      <Image source={main} alt="main banner image" />
     </div>
   );
 }

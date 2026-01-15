@@ -6,17 +6,28 @@ import "./index.css";
 import HomePage from "./pages/HomePage";
 import PageNotFound from "./pages/PageNotFound";
 import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import Fetching from "../src/pages/Fetching";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navigation />
-      <Routes>
-        <Route path="product" element={<Product />} />
-        <Route path="pricing" element={<Pricing />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <Navigation />
+
+        {/* Main content */}
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="product" element={<Product />} />
+            <Route path="pricing" element={<Pricing />} />
+            <Route path="data" element={<Fetching />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }

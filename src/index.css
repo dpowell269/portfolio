@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* set the bg color of the app */
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-800;
+  }
+}

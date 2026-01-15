@@ -5,8 +5,6 @@ type ImageProps = {
 
 export default function Image({ source, alt }: ImageProps) {
   return (
-    <div>
-      <img src={source} alt={alt} />
-    </div>
+    <img className="w-full h-[320px] object-contain" src={source} alt={alt} />
   );
 }
