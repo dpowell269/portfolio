@@ -1,14 +1,23 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Product from "./pages/Product";
+import Pricing from "./pages/Pricing";
 import "./App.css";
 import "./index.css";
-import main from "./assets/main.jpg";
-import Image from "./components/Image";
+import HomePage from "./pages/HomePage";
+import PageNotFound from "./pages/PageNotFound";
+import Navigation from "./components/Navigation";
 
 function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-green-600">Hi</h1>
-      <Image source={main} alt="main image" />
-    </div>
+    <BrowserRouter>
+      <Navigation />
+      <Routes>
+        <Route path="product" element={<Product />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
