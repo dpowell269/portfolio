@@ -34,6 +34,11 @@ export default function Navigation() {
               Fetch
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/login" className={linkClasses}>
+              Login
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

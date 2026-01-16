@@ -8,6 +8,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import Fetching from "../src/pages/Fetching";
+import Login from "../src/pages/Login";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="product" element={<Product />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="data" element={<Fetching />} />
+            <Route path="login" element={<Login />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </main>
