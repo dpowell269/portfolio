@@ -1,7 +1,9 @@
+import Todo from "../components/Todo";
+
 export default function Product() {
   return (
     <div>
-      <h1>Product</h1>
+      <Todo />
     </div>
   );
 }
