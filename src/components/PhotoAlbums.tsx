@@ -1,5 +1,5 @@
 import { type ApiProps } from "../types/ApiTypes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Pagination from "./Pagination";
 
 export default function PhotoAlbums() {
@@ -7,6 +7,7 @@ export default function PhotoAlbums() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
     async function getAlbums() {
@@ -29,24 +30,34 @@ export default function PhotoAlbums() {
     getAlbums();
   }, []);
 
+  // Filter albums based on the query
+  const filteredAlbums = useMemo(() => {
+    return albums.filter((album) =>
+      album.title.toLowerCase().includes(query.toLowerCase()),
+    );
+  }, [albums, query]);
+
+  // Reset page when query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
   if (isLoading) return <p>Loading.........</p>;
   if (error) return <p>{error}</p>;
 
   const itemsPerPage = 10;
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedAlbums = albums.slice(startIndex, endIndex);
-
-  const totalPages = Math.ceil(albums.length / itemsPerPage);
+  const paginatedAlbums = filteredAlbums.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredAlbums.length / itemsPerPage);
 
   function handleNext() {
-    setCurrentPage((prev) => prev + 1);
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   }
 
   function handlePrev() {
-    setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   }
 
   function handleReset() {
@@ -54,10 +65,19 @@ export default function PhotoAlbums() {
   }
 
   return (
-    <div>
+    <div className="flex justify-center flex-col items-center">
       <h1>Albums</h1>
+      <input
+        placeholder="Search albums"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="border p-2 mb-4"
+      />
+
+      {paginatedAlbums.length === 0 && <p>No albums found.</p>}
+
       {paginatedAlbums.map((album) => (
-        <div key={album.id}>
+        <div key={album.id} className="mb-4">
           <h3 className="text-xl">{album.title}</h3>
           <p>{album.url}</p>
           <img
@@ -67,6 +87,7 @@ export default function PhotoAlbums() {
           />
         </div>
       ))}
+
       <Pagination
         total={totalPages}
         currentPage={currentPage}
