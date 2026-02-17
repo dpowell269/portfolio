@@ -3,6 +3,7 @@ import { useState } from "react";
 import main from "../assets/main.jpg";
 import Image from "../components/Image";
 import Modal from "../components/Modal";
+import Counter from "../components/Counter";
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -29,6 +30,9 @@ export default function HomePage() {
           <h2>Modal headline</h2>
           <p>Modal description</p>
         </Modal>
+      </div>
+      <div className="flex justify-center mt-[20px]">
+        <Counter />
       </div>
     </div>
   );
