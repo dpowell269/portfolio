@@ -1,64 +1,38 @@
 import { useReducer } from "react";
 
-type Actions =
-  | { type: "increment" }
-  | { type: "decrement" }
-  | { type: "reset" };
+type Action = { type: "increment" } | { type: "decrement" };
 
-function reducer(state: number, action: Actions) {
-  switch (action.type) {
-    case "increment":
-      return state + 1;
-    case "decrement":
-      return state - 1;
-    case "reset":
-      return 0;
-    default:
-      return state;
-  }
+function reducer(state: number, action: Action): number {
+  if (action.type === "increment") return state + 1;
+  if (action.type === "decrement") return state - 1;
+  return state;
 }
 
 export default function Counter() {
   const [count, dispatch] = useReducer(reducer, 0);
 
-  function handleAdd() {
+  function handleAdd(): void {
     dispatch({ type: "increment" });
   }
 
   function handleSubtract() {
     dispatch({ type: "decrement" });
   }
-
-  function handleReset() {
-    dispatch({ type: "reset" });
-  }
-
   return (
-    <div>
-      <h2>Counter {count}</h2>
-
-      <div>
-        <button
-          onClick={handleSubtract}
-          className="p-[10px] border rounded-md mt-[8px]"
-        >
+    <div className="m-[56px]">
+      <h2 className="text-green-800 font-bold text-2xl">Counter</h2>
+      <p className="text-yellow-500 font-bold text-lg mt-[16px]">{count}</p>
+      <div className="grid grid-cols-2 mt-[16px]">
+        <button onClick={handleSubtract} className="border rounded">
           -
         </button>
-
         <button
           onClick={handleAdd}
-          className="p-[10px] border rounded-md mt-[8px]"
+          className="transition-transform duration-300 hover:rotate-180"
         >
           +
         </button>
       </div>
-
-      <button
-        onClick={handleReset}
-        className="p-[10px] border rounded-md mt-[8px]"
-      >
-        Reset
-      </button>
     </div>
   );
 }
