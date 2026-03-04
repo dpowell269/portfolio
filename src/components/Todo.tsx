@@ -1,49 +1,57 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Input from "./Input";
+import TodoItem from "./TodoItem";
+import { type ListProps } from "../types/TodoItemTypes";
 
 export default function Todo() {
-  const [input, setInput] = useState<string>("");
-  const [lists, setLists] = useState<{ id: string; name: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [items, setItems] = useState<ListProps[]>([]);
+  const [filter, setFilter] = useState<"all" | "todo" | "completed">("all");
 
-  function addName() {
-    if (input === "") return;
-    const newItem = {
-      id: crypto.randomUUID(),
-      name: input,
-    };
-    setLists((prev) => [...prev, newItem]);
+  function handleAdd() {
+    if (!input.trim()) return;
+
+    setItems((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), name: input, done: false },
+    ]);
     setInput("");
   }
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        addName();
-      }
-    }
+  function onToggle(id: string) {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, done: !item.done } : item,
+      ),
+    );
+  }
 
-    window.addEventListener("keydown", handleKeyDown);
+  function handleDelete(id: string) {
+    setItems((items) => items.filter((iterator) => iterator.id !== id));
+  }
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [input, lists]);
+  const filtered = items.filter((it) => {
+    if (filter === "all") return true;
+    if (filter === "todo") return !it.done;
+    if (filter === "completed") return it.done;
+  });
 
   return (
-    <div className="p-[10px]">
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="p-[5px] border rounded-lg"
-        placeholder="name"
-      />
-      <button onClick={addName}>Add Name</button>
-      <div>
-        <ul>
-          {lists.map((list) => (
-            <li key={list.id}>{list.name}</li>
-          ))}
-        </ul>
-      </div>
+    <div>
+      <Input input={input} setInput={setInput} handleAdd={handleAdd} />
+      <button onClick={() => setFilter("all")}>all</button>
+      <button onClick={() => setFilter("todo")}>todo</button>
+      <button onClick={() => setFilter("completed")}>completed</button>
+
+      {filtered.map((todo) => (
+        <TodoItem
+          id={todo.id}
+          name={todo.name}
+          done={todo.done}
+          onToggle={onToggle}
+          handleDelete={handleDelete}
+        />
+      ))}
     </div>
   );
 }
