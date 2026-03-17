@@ -1,22 +1,27 @@
-import { ListProps } from "../types/TodoItemTypes";
+import React from "react";
+import { type ListProps } from "../types/TodoItemTypes";
 
 type TodoItemProps = ListProps & {
-  onToggle: (value: string) => void;
+  handleToggle: (value: string) => void;
   handleDelete: (value: string) => void;
 };
 
-export default function TodoItem({
-  id,
+const TodoItem = React.memo(function TodoItem({
   name,
   done,
-  onToggle,
+  id,
+  handleToggle,
   handleDelete,
 }: TodoItemProps) {
+  console.log("Rendering:", name);
+
   return (
-    <div className="flex gap-[8px] m-[12px]" key={id}>
-      <input type="checkbox" checked={done} onChange={() => onToggle(id)} />
-      <p>{name}</p>
-      <button onClick={() => handleDelete(id)}>delete</button>
-    </div>
+    <li>
+      <input type="checkbox" checked={done} onChange={() => handleToggle(id)} />
+      {name}
+      <button onClick={() => handleDelete(id)}>Delete</button>
+    </li>
   );
-}
+});
+
+export default TodoItem;
