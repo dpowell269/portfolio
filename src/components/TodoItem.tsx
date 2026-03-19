@@ -1,4 +1,3 @@
-import React from "react";
 import { type ListProps } from "../types/TodoItemTypes";
 
 type TodoItemProps = ListProps & {
@@ -6,22 +5,19 @@ type TodoItemProps = ListProps & {
   handleDelete: (value: string) => void;
 };
 
-const TodoItem = React.memo(function TodoItem({
+export default function TodoItem({
   name,
   done,
   id,
   handleToggle,
   handleDelete,
 }: TodoItemProps) {
-  console.log("Rendering:", name);
-
   return (
-    <li>
+    <li className="flex gap-[16px]">
       <input type="checkbox" checked={done} onChange={() => handleToggle(id)} />
       {name}
+      <button>Edit</button>
       <button onClick={() => handleDelete(id)}>Delete</button>
     </li>
   );
-});
-
-export default TodoItem;
+}

@@ -3,16 +3,23 @@ type InputProps = {
   setInput: (value: string) => void;
   handleAdd: () => void;
 };
-
 export default function Input({ input, setInput, handleAdd }: InputProps) {
+  const isDisabled = input.trim().length < 3;
   return (
     <div>
       <input
-        placeholder="start typing..."
+        type="text"
+        placeholder="start Typing. . ."
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button onClick={handleAdd}>Add</button>
+      <button
+        onClick={handleAdd}
+        disabled={isDisabled}
+        className={isDisabled ? "" : "underline"}
+      >
+        add
+      </button>
     </div>
   );
 }
