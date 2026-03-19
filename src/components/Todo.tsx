@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Input from "./Input";
 import TodoItem from "./TodoItem";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { type ListProps } from "../types/TodoItemTypes";
 
 export default function Todo() {
   const [input, setInput] = useState("");
-  const [items, setItems] = useState<ListProps[]>([]);
+  const [items, setItems] = useLocalStorage<ListProps[]>("todos", []);
   const [filter, setFilter] = useState<"all" | "todo" | "complete">("all");
 
   function handleAdd() {
