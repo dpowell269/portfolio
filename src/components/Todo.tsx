@@ -1,28 +1,29 @@
 import { useState } from "react";
 import Input from "./Input";
-import TodoItem from "./TodoItem";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { type ListProps } from "../types/TodoItemTypes";
+import TodoItem from "./TodoItem";
+
+type FilterProps = "all" | "complete" | "todo";
 
 export default function Todo() {
   const [input, setInput] = useState("");
-  const [items, setItems] = useLocalStorage<ListProps[]>("todos", []);
-  const [filter, setFilter] = useState<"all" | "todo" | "complete">("all");
+  const [items, setItems] = useState<ListProps[]>([]);
+  const [filter, setFilter] = useState<FilterProps>("all");
 
   function handleAdd() {
     if (!input.trim()) return;
     setItems((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), name: input.trim(), done: false },
+      { name: input, id: crypto.randomUUID(), done: false },
     ]);
     setInput("");
   }
 
   function handleToggle(id: string) {
     setItems((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, done: !todo.done } : todo,
-      ),
+      prev.map((todo) => {
+        return todo.id === id ? { ...todo, done: !todo.done } : todo;
+      }),
     );
   }
 
@@ -30,34 +31,38 @@ export default function Todo() {
     setItems((prev) => prev.filter((todo) => todo.id !== id));
   }
 
-  const filteredItems = items.filter((todo) => {
-    if (filter === "todo") return !todo.done;
-    if (filter === "complete") return todo.done;
+  function handleEdit(id: string, newName: string) {
+    setItems((prev) =>
+      prev.map((todo) => {
+        return todo.id === id ? { ...todo, name: newName } : todo;
+      }),
+    );
+  }
+
+  const filteredItems = items.filter((prev) => {
+    if (filter === "complete") return prev.done;
+    if (filter === "todo") return !prev.done;
     return true;
   });
   return (
     <div>
       <Input input={input} setInput={setInput} handleAdd={handleAdd} />
       <div>
-        <h3>Filters</h3>
-        <div className="flex gap-[16px]">
-          <button onClick={() => setFilter("all")}>All</button>
-          <button onClick={() => setFilter("complete")}>Complete</button>
-          <button onClick={() => setFilter("todo")}>Todo</button>
-        </div>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("todo")}>todo</button>
+        <button onClick={() => setFilter("complete")}>complete</button>
       </div>
-      <div>
-        <ul>
-          {filteredItems.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              {...todo}
-              handleToggle={handleToggle}
-              handleDelete={handleDelete}
-            />
-          ))}
-        </ul>
-      </div>
+      <ul>
+        {filteredItems.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            {...todo}
+            handleToggle={handleToggle}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
