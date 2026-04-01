@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { type ListProps } from "../types/TodoItemTypes";
+
 type TodoItemProps = ListProps & {
   handleToggle: (value: string) => void;
   handleDelete: (value: string) => void;
@@ -16,29 +17,44 @@ export default function TodoItem({
 }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
+  const editRef = useRef<HTMLInputElement | null>(null);
 
-  function handleSave() {
-    if (!editValue.trim()) return;
-    handleEdit(id, editValue);
-    setIsEditing(false);
-  }
+  useEffect(() => {
+    if (isEditing) {
+      editRef.current?.focus();
+    }
+  }, [isEditing]);
+
   return (
-    <li>
+    <li className="flex gap-[12px]">
       <input type="checkbox" checked={done} onChange={() => handleToggle(id)} />
+      {isEditing ? (
+        <input
+          ref={editRef}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+        />
+      ) : (
+        <span>{name}</span>
+      )}
 
       {isEditing ? (
-        <>
-          <input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-          />
-          <button onClick={handleSave}>Save</button>
-        </>
+        <button
+          onClick={() => {
+            handleEdit(id, editValue);
+            setIsEditing(false);
+          }}
+        >
+          Save
+        </button>
       ) : (
-        <>
-          {name}
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-        </>
+        <button
+          onClick={() => {
+            setIsEditing(true);
+          }}
+        >
+          Edit
+        </button>
       )}
 
       <button onClick={() => handleDelete(id)}>Delete</button>

@@ -1,20 +1,20 @@
 import { useState } from "react";
 import Input from "./Input";
-import { type ListProps } from "../types/TodoItemTypes";
 import TodoItem from "./TodoItem";
+import { type ListProps } from "../types/TodoItemTypes";
 
-type FilterProps = "all" | "complete" | "todo";
+type FilterProps = "all" | "todo" | "complete";
 
 export default function Todo() {
   const [input, setInput] = useState("");
   const [items, setItems] = useState<ListProps[]>([]);
   const [filter, setFilter] = useState<FilterProps>("all");
 
-  function handleAdd() {
+  function handleAddInput() {
     if (!input.trim()) return;
     setItems((prev) => [
       ...prev,
-      { name: input, id: crypto.randomUUID(), done: false },
+      { id: crypto.randomUUID(), name: input, done: false },
     ]);
     setInput("");
   }
@@ -39,18 +39,26 @@ export default function Todo() {
     );
   }
 
-  const filteredItems = items.filter((prev) => {
-    if (filter === "complete") return prev.done;
-    if (filter === "todo") return !prev.done;
+  const filteredItems = items.filter((todo) => {
+    if (filter === "complete") return todo.done;
+    if (filter === "todo") return !todo.done;
     return true;
   });
   return (
     <div>
-      <Input input={input} setInput={setInput} handleAdd={handleAdd} />
       <div>
+        <Input
+          input={input}
+          setInput={setInput}
+          placeholder="start typing"
+          handleAddInput={handleAddInput}
+        />
+      </div>
+      <div className="flex gap-[12px]">
+        <h2>Filters:</h2>
         <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("todo")}>todo</button>
-        <button onClick={() => setFilter("complete")}>complete</button>
+        <button onClick={() => setFilter("todo")}>Todo</button>
+        <button onClick={() => setFilter("complete")}>Complete</button>
       </div>
       <ul>
         {filteredItems.map((todo) => (
