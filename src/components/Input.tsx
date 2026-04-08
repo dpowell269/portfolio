@@ -1,31 +1,18 @@
-import { useRef, useEffect } from "react";
 type InputProps = {
   input: string;
   setInput: (value: string) => void;
-  placeholder: string;
-  handleAddInput: () => void;
+  handleAdd: () => void;
 };
-export default function Input({
-  input,
-  setInput,
-  placeholder,
-  handleAddInput,
-}: InputProps) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    console.log("effect rendered");
-    inputRef.current?.focus();
-  }, [input]);
+export default function Input({ input, setInput, handleAdd }: InputProps) {
   return (
     <div>
       <input
-        ref={inputRef}
-        placeholder={placeholder}
+        placeholder="start typing"
+        type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button onClick={handleAddInput}>Add</button>
+      <button onClick={handleAdd}>Add</button>
     </div>
   );
 }
