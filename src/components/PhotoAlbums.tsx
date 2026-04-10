@@ -1,22 +1,29 @@
 import { type ApiProps } from "../types/ApiTypes";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
+import { useSearch } from "../hooks/useSearch";
 import Pagination from "./Pagination";
+import Search from "./Search";
 
 export default function PhotoAlbums() {
   const [albums, setAlbums] = useState<ApiProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [query, setQuery] = useState<string>("");
+
+  // ✅ use custom search hook correctly
+  const { query, setQuery, filteredItems } = useSearch(albums, "title");
 
   useEffect(() => {
     async function getAlbums() {
       try {
         setIsLoading(true);
+
         const res = await fetch("https://jsonplaceholder.typicode.com/photos");
+
         if (!res.ok) {
           throw new Error(`Something went wrong ${res.status}`);
         }
+
         const data: ApiProps[] = await res.json();
         setAlbums(data);
       } catch (err) {
@@ -27,17 +34,11 @@ export default function PhotoAlbums() {
         setIsLoading(false);
       }
     }
+
     getAlbums();
   }, []);
 
-  // Filter albums based on the query
-  const filteredAlbums = useMemo(() => {
-    return albums.filter((album) =>
-      album.title.toLowerCase().includes(query.toLowerCase()),
-    );
-  }, [albums, query]);
-
-  // Reset page when query changes
+  // reset page when search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [query]);
@@ -49,15 +50,20 @@ export default function PhotoAlbums() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedAlbums = filteredAlbums.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredAlbums.length / itemsPerPage);
+  // ✅ now using hook result directly
+  const paginatedAlbums = filteredItems.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
   function handleNext() {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
   }
 
   function handlePrev() {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
   }
 
   function handleReset() {
@@ -67,12 +73,8 @@ export default function PhotoAlbums() {
   return (
     <div className="flex justify-center flex-col items-center">
       <h1>Albums</h1>
-      <input
-        placeholder="Search albums"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="border p-2 mb-4"
-      />
+
+      <Search query={query} setQuery={setQuery} />
 
       {paginatedAlbums.length === 0 && <p>No albums found.</p>}
 
